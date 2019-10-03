@@ -69,14 +69,14 @@ class Config(object):
     time_limit_answer = 0 #Don't change, the value will be calculated by code
     addition_time = 0 # add more waiting time to both question and answer side. Modify if applicable
     addition_time_question = 0 # add more waiting time to question side. Modify if applicable
-    addition_time_answer = 0 # add more waiting time to answer side. Modify if applicable
+    addition_time_answer = 0.5 # add more waiting time to answer side. Modify if applicable
     add_time = True
     play = False # default flag if Auto Advance start.Don't change. Use shortcut J or k to start or stop while reviewing cards
     timer = None # Don't change
     is_question = True # Don't change
     adjust_both = False
-    default_waiting_time = 2.0 # default waiting time for both sides, Modify if applicable
-    audio_speed = 2.0 # default audio speed, Modify if applicable
+    default_waiting_time = 1.0 # default waiting time for both sides, Modify if applicable
+    audio_speed = 2.2 # default audio speed, Modify if applicable
     _soundReg = r"\[sound:(.*?)\]" # Don't change
     mode = 1 # 1: add times in all audios, 0: get time in the first audio
     stdoutQueue = Queue()
@@ -85,12 +85,12 @@ class Config(object):
     wait_for_audio = True # if wait for audio finished or not. Modify if applicable
     is_question_audio = True # Don't change
     is_answer_audio = True # Don't change
-    repeat_field = {"发音":[0.8,1.5,2.2]} # specify repeat field and audio speed each time. Modify if applicable
+    repeat_field = {"发音":[0.8,1.5,2.5]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
     audio_startswith = "mdx-oalecd9_mdx" # identify audio file which start with specified letters. Modify if applicable
-    audio_startswith_speed_factor = 0.8 # change audio speed for identified audio files. Modify if applicable
+    audio_startswith_speed_factor = 0.7 # change audio speed for identified audio files. Modify if applicable
     # e.g. audio files from different sources may have different audio speed by default.
     # my case is that the audio files from oalecd9_mdx is faster than other audio files
     # so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx"
@@ -212,8 +212,8 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
 def set_time_limit():
     card = mw.reviewer.card
     # need to False autoplay of anki.
-    mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = False
     if card is not None:
+        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = False
         note = card.note()
         model = note.model()
         audio_fields, fields_with_audio = find_audio_fields(card)
@@ -272,7 +272,7 @@ def wait_for_audio():
     if isWin:
         pass
     else:
-        while True and (i <5):
+        while True and (i < 2):
             i += 1
             if Config.player:
                 try:
@@ -281,7 +281,7 @@ def wait_for_audio():
                         break
                     else:
                         t_remain = Config.player.get_property("playtime-remaining")
-                        time.sleep(max(t_remain+0.05,0.1))
+                        time.sleep(max(t_remain+0.01,0.1))
                 except:
                     try:
                         anki.sound.cleanupMPV()
