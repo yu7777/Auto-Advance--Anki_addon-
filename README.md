@@ -28,9 +28,9 @@ Press Shift-F to add silence after back card.
 
 Press Shift-J to add silence after both front and back cards.
 
-Press [ to decrease the speeds of back cards' audios.
+Press [ to decrease the speeds of cards' audios.
 
-Press ] to increase the speeds of back cards' audios.
+Press ] to increase the speeds of cards' audios.
 
 
 # Config Details.  
