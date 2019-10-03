@@ -75,8 +75,8 @@ class Config(object):
     timer = None # Don't change
     is_question = True # Don't change
     adjust_both = False
-    default_waiting_time = 2.5 # default waiting time for both sides, Modify if applicable
-    audio_speed = 2.2 # default audio speed, Modify if applicable
+    default_waiting_time = 2.0 # default waiting time for both sides, Modify if applicable
+    audio_speed = 2.0 # default audio speed, Modify if applicable
     _soundReg = r"\[sound:(.*?)\]" # Don't change
     mode = 1 # 1: add times in all audios, 0: get time in the first audio
     stdoutQueue = Queue()
@@ -247,7 +247,7 @@ def load_audio_to_player(playlist):
             try:
                 Config.player.command("loadfile", path, "append-play","speed="+ f"{speed:.2f}")
                 # mpvManager1.command("loadfile", path, "append-play","speed="+ str(speed))
-                time.sleep(0.02)
+                time.sleep(0.1)
             except:
                 print('something wrong while loading file to MPV')
                 break
