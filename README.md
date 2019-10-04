@@ -1,8 +1,9 @@
 # Auto-Advance Anki addon  
 This is an Anki addon which automatically show answer, make choice and then flip card.   
-Similar with auto play cards function.
+Similar with auto play cards function. https://ankiweb.net/shared/info/1747534155
 
-Currently only tested on Mac.   
+Currently only tested on Mac.  
+I didn't test on Linux. It may work on Linux because Anki also use mpv on Linux.   
 Windows version need to add code to load_audio_to_player() and wait_for_audio()  
 
 Feel free to add any new features.   
@@ -11,10 +12,20 @@ Feel free to add any new features.
 This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
 
 # New Features.  
-Repeat audio files at differnt play speed.    
+Repeat audio play at differnt play speed.    
+```python
+repeat_field = {"发音":[0.8,1.5,2.2]} # specify repeat field and audio speed each time. Modify if applicable
+    # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
+    # any audio in voice field will be played once at audio speed 0.5
+    # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
+```
 Slow down or speed up some selected audio files while playing.   
-Add automatically select Hard while reviewing.    
 
+Add automatically select Hard while reviewing.    
+```python
+# answer_choice = mw.reviewer._defaultEase() # default ease
+answer_choice = int(2) # choose Hard
+```
 
 # Usage
 
@@ -31,6 +42,14 @@ Press Shift-J to add silence after both front and back cards.
 Press [ to decrease the speeds of cards' audios.
 
 Press ] to increase the speeds of cards' audios.
+
+# Tips.  
+1.  You can use shortcut "j" to start Auto Advance play mode BEFORE you enter your deck and click "Study Now".     
+If you start Auto Advance play mode when you are reviewing a card, then the first card will not be working as it should be with this add-on.     
+Not sure if this is a bug. Please feel free to modify code on GitHub.     
+2.  Anytime you can use shortcut "k" to stop Auto Advance play mode.     
+3.  Use "[" or "]" to decrease or increase your audio play speed. This works all the time even though you don't use Auto Advance play mode.     
+4.  Auto Advance play mode will set deck's config "autoplay" FALSE. When you stop Auto Advance play mode and want to use Anki's autoplay, You need manually change it back. Deck option>General>Automatically play audio.    
 
 
 # Config Details.  
