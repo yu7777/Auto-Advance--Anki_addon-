@@ -1,14 +1,15 @@
 # Auto-Advance Anki addon  
 This is an Anki addon which automatically show answer, make choice and then flip card.   
-Similar with auto play cards function. https://ankiweb.net/shared/info/1747534155
+Automatically play cards and repeat specified audio field at specified play speed.   
+This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-Currently only tested on Mac.  
+Currently I only tested on Mac.   
 I didn't test on Linux. It may work on Linux because Anki also use mpv on Linux.   
 Windows version need to add code to load_audio_to_player() and wait_for_audio()  
 
 Feel free to add any new features.   
 
-# Describition.  
+# Original addon code.  
 This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
 
 # New Features.  
