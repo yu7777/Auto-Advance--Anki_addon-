@@ -204,10 +204,10 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
                     continue
                 playlist.append((audio,speed))
                 time += audio_time / speed
-
     if time == 0:
         time = Config.default_waiting_time * 1000
-
+    else:
+        time += len(playlist) * 250
     return time, playlist
 
 def set_time_limit():
@@ -280,7 +280,9 @@ def wait_for_audio():
                         break
                     else:
                         t_remain = Config.player.get_property("playtime-remaining")
-                        time.sleep(max(t_remain+0.01,0.1))
+                        # print(str(i)+" times try")
+                        # print(t_remain)
+                        time.sleep(max(t_remain+0.05,0.1))
                 except:
                     try:
                         anki.sound.cleanupMPV()
@@ -421,7 +423,7 @@ def change_default_waiting_time():
     else:
         return
     if default_waiting_time >= 0 and default_waiting_time <= 20:
-        Config.default_waiting_time = default_waiting_time 
+        Config.default_waiting_time = default_waiting_time
     else:
         utils.showInfo('Invalid additional time. Time value must be in the range 0 to 20')
 
