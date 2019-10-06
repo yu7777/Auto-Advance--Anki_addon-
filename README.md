@@ -100,7 +100,7 @@ class Config(object):
     # e.g. audio files from different sources may have different audio speed by default.
     # my case is that the audio files from oalecd9_mdx is faster than other audio files
     # so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx"
-    # will be played at speed 2.0 * 0.8 = 1.6
+    # will be played at speed 2.0 * 0.6 = 1.2
     # Thus while reviewing cards all audio files sound at similar speed
     playlist_question = [] # Don't change
     playlist_answer = [] # Don't change
