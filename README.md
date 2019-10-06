@@ -35,6 +35,12 @@ Add automatically select Hard while reviewing.
 answer_choice = int(2) # choose Hard
 ```
 
+# Menu and Shortcuts
+<p align="center">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-06%20at%207.23.24%20pm.png" width="550" title="menu and shortcuts">
+</p>
+
+
 # Usage
 
 Press j or Ctrl+j to start the add on.
@@ -50,6 +56,8 @@ Press Shift-J to add silence after both front and back cards.
 Press [ to decrease the speeds of cards' audios.
 
 Press ] to increase the speeds of cards' audios.
+
+Press g to toggle default choice: Hard or Good
 
 # Tips.  
 1.  You can use shortcut "j" to start Auto Advance play mode BEFORE you enter your deck and click "Study Now".     
