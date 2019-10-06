@@ -24,10 +24,9 @@ from .mutagen.Queue import Queue
 from anki.sound import play, mpvManager
 from anki.sound import mplayerQueue, mplayerClear, mplayerEvt
 from anki.sound import MplayerMonitor
-from anki.hooks import addHook, wrap
+from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
-
 
 
 class CustomMessageBox(QMessageBox):
@@ -75,7 +74,7 @@ class Config(object):
     timer = None # Don't change
     is_question = True # Don't change
     adjust_both = False
-    default_waiting_time = 1.0 # default waiting time for both sides, Modify if applicable
+    default_waiting_time = 0.5 # default waiting time for both sides, Modify if applicable
     audio_speed = 2.2 # default audio speed, Modify if applicable
     _soundReg = r"\[sound:(.*?)\]" # Don't change
     mode = 1 # 1: add times in all audios, 0: get time in the first audio
@@ -85,7 +84,7 @@ class Config(object):
     wait_for_audio = True # if wait for audio finished or not. Modify if applicable
     is_question_audio = True # Don't change
     is_answer_audio = True # Don't change
-    repeat_field = {"发音":[0.8,1.5,2.5]} # specify repeat field and audio speed each time. Modify if applicable
+    repeat_field = {"发音":[0.7,1.5,2.6]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
@@ -106,6 +105,8 @@ class Config(object):
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this fields_with_audio
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
+    temporary_false_autoplay = False # Don't change
+    last_card = None # Don't change
 
     def __init__(self):
         pass
@@ -198,10 +199,10 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
                     speed = Config.audio_speed
                 if field in Config.repeat_field.keys():
                     for speed in Config.repeat_field[field]:
-                        playlist.append((path,speed))
+                        playlist.append((audio,speed))
                         time += audio_time / speed
                     continue
-                playlist.append((path,speed))
+                playlist.append((audio,speed))
                 time += audio_time / speed
 
     if time == 0:
@@ -213,7 +214,6 @@ def set_time_limit():
     card = mw.reviewer.card
     # need to False autoplay of anki.
     if card is not None:
-        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = False
         note = card.note()
         model = note.model()
         audio_fields, fields_with_audio = find_audio_fields(card)
@@ -242,12 +242,11 @@ def load_audio_to_player(playlist):
         if not Config.player:
             # print('set up sound')
             setupSound()
-            # mpvManager1 = anki.sound.MpvManager()
-        for path,speed in playlist:
+        for file,speed in playlist:
             try:
+                runHook("mpvWillPlay", file)
+                path = os.path.join(os.getcwd(), file)
                 Config.player.command("loadfile", path, "append-play","speed="+ f"{speed:.2f}")
-                # mpvManager1.command("loadfile", path, "append-play","speed="+ str(speed))
-                time.sleep(0.1)
             except:
                 print('something wrong while loading file to MPV')
                 break
@@ -268,16 +267,16 @@ def setupSound():
         print("mpv too old, reverting to mplayer")
 
 def wait_for_audio():
-    i=0
     if isWin:
         pass
     else:
+        i = 0
         while True and (i < 2):
             i += 1
             if Config.player:
                 try:
                     if Config.player.get_property("idle-active"):
-                        # time.sleep(0.2)
+                        # print('not playing')
                         break
                     else:
                         t_remain = Config.player.get_property("playtime-remaining")
@@ -297,20 +296,37 @@ def show_answer():
         Config.is_question = False
         if mw.reviewer.typedAnswer == None:
             mw.reviewer.typedAnswer = ""
+        temporary_false_toggle_autoplay("begin")
         mw.reviewer._showAnswer()
+        temporary_false_toggle_autoplay("end")
     if Config.play:
         Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
         load_audio_to_player(Config.playlist_answer)
 
 
+def temporary_false_toggle_autoplay(flag):
+    card = mw.reviewer.card
+    if (flag == "begin") and mw.col.decks.confForDid(card.odid or card.did)['autoplay']:
+        Config.last_card = card
+        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = False
+        Config.temporary_false_autoplay = True
+        # print('begin')
+    elif (flag == "end") and Config.temporary_false_autoplay:
+        if card is None:
+            card = Config.last_card
+        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = True
+        Config.temporary_false_autoplay = False
+        # print('end')
 
 def change_card():
+
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
+        temporary_false_toggle_autoplay("begin")
         mw.reviewer._answerCard(Config.answer_choice)
-
+        temporary_false_toggle_autoplay("end")
 
 def check_valid_card():
     # utils.showInfo("Check Valid Card")
@@ -327,7 +343,6 @@ def show_question():
     if Config.play:
         Config.timer = mw.progress.timer(Config.time_limit_question, show_answer, False)
         load_audio_to_player(Config.playlist_question)
-
 
 def start():
     if Config.play: return
@@ -471,15 +486,13 @@ def apply_audio_speed():
                     anki.sound.mpvManager.set_property("speed", Config.audio_speed)
 
 def audio_pause():
-    if platform.system() == 'Windows':
+    if isWin:
         if anki.sound.mplayerManager is not None:
             if anki.sound.mplayerManager.mplayer is not None:
                 anki.sound.mplayerManager.mplayer.stdin.write("pause\n")
     else:
-        key = "p"
         if anki.sound.mpvManager is not None:
-            if anki.sound.mpvManager.command is not None:
-                anki.sound.mpvManager.command ("keypress", key)
+            anki.sound.mpvManager.togglePause()
 
 def auto_option():
     pass
