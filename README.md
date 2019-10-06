@@ -50,7 +50,6 @@ If you start Auto Advance play mode when you are reviewing a card, then the firs
 Not sure if this is a bug. Please feel free to modify code on GitHub.     
 2.  Anytime you can use shortcut "k" to stop Auto Advance play mode.     
 3.  Use "[" or "]" to decrease or increase your audio play speed. This works all the time even though you don't use Auto Advance play mode.     
-4.  Auto Advance play mode will set deck's config "autoplay" FALSE. When you stop Auto Advance play mode and want to use Anki's autoplay, You need manually change it back. Deck option>General>Automatically play audio.    
 
 
 # Config Details.  
