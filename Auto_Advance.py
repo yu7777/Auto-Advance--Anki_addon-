@@ -89,7 +89,7 @@ class Config(object):
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
     audio_startswith = "mdx-oalecd9_mdx" # identify audio file which start with specified letters. Modify if applicable
-    audio_startswith_speed_factor = 0.7 # change audio speed for identified audio files. Modify if applicable
+    audio_startswith_speed_factor = 0.6 # change audio speed for identified audio files. Modify if applicable
     # e.g. audio files from different sources may have different audio speed by default.
     # my case is that the audio files from oalecd9_mdx is faster than other audio files
     # so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx"
@@ -271,7 +271,7 @@ def wait_for_audio():
         pass
     else:
         i = 0
-        while True and (i < 2):
+        while True and (i < 5):
             i += 1
             if Config.player:
                 try:
@@ -348,7 +348,7 @@ def start():
     if Config.play: return
     apply_audio_speed()
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(0.5, "Auto Advance: start", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: start", "Message")
     sound.clearAudioQueue()
     if Config.add_time:
         set_time_limit()
@@ -367,7 +367,7 @@ def stop():
     if not Config.play:
         return
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(0.5, "Auto Advance: stop", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: stop", "Message")
     Config.play = False
     hooks.remHook("showQuestion",show_question)
     if Config.timer is not None:
@@ -421,7 +421,7 @@ def change_default_waiting_time():
     else:
         return
     if default_waiting_time >= 0 and default_waiting_time <= 20:
-        Config.default_waiting_time = default_waiting_time * 1000
+        Config.default_waiting_time = default_waiting_time 
     else:
         utils.showInfo('Invalid additional time. Time value must be in the range 0 to 20')
 
@@ -441,9 +441,9 @@ def add_time_answer():
 def switch_mode():
     Config.mode = 1 - Config.mode
     if Config.mode == 1:
-        CustomMessageBox.showWithTimeout(0.5, "Get time of all audios", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Get time of all audios", "Message")
     else:
-        CustomMessageBox.showWithTimeout(0.5, "Only get time of the first audio", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Only get time of the first audio", "Message")
 
 def toggle_show_notification():
     Config.show_notif = not Config.show_notif
@@ -493,6 +493,18 @@ def audio_pause():
     else:
         if anki.sound.mpvManager is not None:
             anki.sound.mpvManager.togglePause()
+
+def toggle_choice_hard_good():
+    if Config.answer_choice == int(2):
+        Config.answer_choice = mw.reviewer._defaultEase()
+        choice = "Good"
+    else:
+        Config.answer_choice = int(2)
+        choice = "Hard"
+    if Config.show_notif:
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
+        "Default choice: " + choice, "Message")
+
 
 def auto_option():
     pass
@@ -570,6 +582,11 @@ afc.addAction(action)
 action = QAction("Pause audio playback", mw)
 action.setShortcut("p")
 action.triggered.connect(audio_pause)
+afc.addAction(action)
+
+action = QAction("Toggle Choice: Hard or Good", mw)
+action.setShortcut("g")
+action.triggered.connect(toggle_choice_hard_good)
 afc.addAction(action)
 
 # action = QAction("Pause audio playback and card flip", mw)
