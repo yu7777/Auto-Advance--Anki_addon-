@@ -21,7 +21,14 @@ repeat_field = {"发音":[0.8,1.5,2.2]} # specify repeat field and audio speed e
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
 ```
 Slow down or speed up some selected audio files while playing.   
-
+```python
+audio_startswith = "mdx-oalecd9_mdx" # identify audio file which start with specified letters. Modify if applicable
+audio_startswith_speed_factor = 0.8 # change audio speed for identified audio files. Modify if applicable
+    # e.g. audio files from different sources may have different audio speed by default.
+    # my case is that the audio files from oalecd9_mdx is faster than other audio files
+    # so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx"
+    # will be played at speed 2.0 * 0.8 = 1.6
+```
 Add automatically select Hard while reviewing.    
 ```python
 # answer_choice = mw.reviewer._defaultEase() # default ease
