@@ -336,6 +336,7 @@ def check_valid_card():
 
 
 def show_question():
+    sound.clearAudioQueue()
     if not check_valid_card():
         temporary_false_toggle_autoplay("end")
         return
