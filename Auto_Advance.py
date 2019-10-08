@@ -29,6 +29,7 @@ from aqt.utils import showInfo
 import re
 
 
+
 class CustomMessageBox(QMessageBox):
 
     def __init__(self, *__args):
@@ -93,7 +94,7 @@ class Config(object):
     # e.g. audio files from different sources may have different audio speed by default.
     # my case is that the audio files from oalecd9_mdx is faster than other audio files
     # so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx"
-    # will be played at speed 2.0 * 0.8 = 1.6
+    # will be played at speed 2.0 * 0.6 = 1.2
     # Thus while reviewing cards all audio files sound at similar speed
     playlist_question = [] # Don't change
     playlist_answer = [] # Don't change
@@ -244,7 +245,6 @@ def load_audio_to_player(playlist):
             setupSound()
         for file,speed in playlist:
             try:
-                runHook("mpvWillPlay", file)
                 path = os.path.join(os.getcwd(), file)
                 Config.player.command("loadfile", path, "append-play","speed="+ f"{speed:.2f}")
             except:
@@ -298,9 +298,7 @@ def show_answer():
         Config.is_question = False
         if mw.reviewer.typedAnswer == None:
             mw.reviewer.typedAnswer = ""
-        temporary_false_toggle_autoplay("begin")
         mw.reviewer._showAnswer()
-        temporary_false_toggle_autoplay("end")
     if Config.play:
         Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
         load_audio_to_player(Config.playlist_answer)
@@ -321,14 +319,13 @@ def temporary_false_toggle_autoplay(flag):
         # print('end')
 
 def change_card():
-
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
-        temporary_false_toggle_autoplay("begin")
         mw.reviewer._answerCard(Config.answer_choice)
-        temporary_false_toggle_autoplay("end")
+        if mw.state == 'overview':
+            temporary_false_toggle_autoplay("end")
 
 def check_valid_card():
     # utils.showInfo("Check Valid Card")
@@ -340,7 +337,9 @@ def check_valid_card():
 
 def show_question():
     if not check_valid_card():
+        temporary_false_toggle_autoplay("end")
         return
+    temporary_false_toggle_autoplay("begin")
     set_time_limit()
     if Config.play:
         Config.timer = mw.progress.timer(Config.time_limit_question, show_answer, False)
@@ -359,9 +358,11 @@ def start():
     Config.play = True
     if mw.reviewer.state == 'question':
         if check_valid_card():
+            temporary_false_toggle_autoplay("begin")
             show_answer()
     elif mw.reviewer.state == 'answer':
         if check_valid_card():
+            temporary_false_toggle_autoplay("begin")
             change_card()
 
 def stop():
@@ -375,6 +376,7 @@ def stop():
     if Config.timer is not None:
         Config.timer.stop()
     Config.timer = None
+    temporary_false_toggle_autoplay("end")
     # Config.audio_speed = 1.0
 
 
