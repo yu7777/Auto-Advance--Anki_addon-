@@ -103,7 +103,7 @@ class Config(object):
     answer_choice = int(2) # chose Hard
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
-    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this fields_with_audio
+    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
 
