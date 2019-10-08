@@ -85,7 +85,7 @@ class Config(object):
     wait_for_audio = True # if wait for audio finished or not. Modify if applicable
     is_question_audio = True # Don't change
     is_answer_audio = True # Don't change
-    repeat_field = {"发音":[0.7,1.5,2.6]} # specify repeat field and audio speed each time. Modify if applicable
+    repeat_field = {"发音":[0.7,1.6,2.8]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
@@ -106,8 +106,6 @@ class Config(object):
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this fields_with_audio
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
-    temporary_false_autoplay = False # Don't change
-    last_card = None # Don't change
 
     def __init__(self):
         pass
@@ -184,6 +182,22 @@ def calculate_file_length(suffix, mp):
         time = 0
     return time
 
+def get_audio_speed(audio, field, audio_time):
+    playlist_single = []
+    time_tmp = 0
+    if audio.startswith(Config.audio_startswith):
+        speed = Config.audio_speed * Config.audio_startswith_speed_factor
+    else:
+        speed = Config.audio_speed
+    if field in Config.repeat_field.keys():
+        for speed in Config.repeat_field[field]:
+            playlist_single.append((audio,speed))
+            time_tmp += audio_time / speed
+        return playlist_single, time_tmp
+    playlist_single.append((audio,speed))
+    time_tmp += audio_time / speed
+    return playlist_single, time_tmp
+
 
 def calculate_time(media_path, audio_fields, fields_with_audio):
     time = 0
@@ -194,17 +208,11 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
             for audio in audios_in_field:
                 path = media_path + audio
                 audio_time = calculate_file_length(audio[-3:], path)
-                if audio.startswith(Config.audio_startswith):
-                    speed = Config.audio_speed * Config.audio_startswith_speed_factor
-                else:
-                    speed = Config.audio_speed
-                if field in Config.repeat_field.keys():
-                    for speed in Config.repeat_field[field]:
-                        playlist.append((audio,speed))
-                        time += audio_time / speed
-                    continue
-                playlist.append((audio,speed))
-                time += audio_time / speed
+                playlist_single, time_tmp = get_audio_speed(audio, field, audio_time)
+                playlist.extend(playlist_single)
+                time += time_tmp
+                if Config.mode == 0: break #first audio
+            if Config.mode == 0: break #first field
     if time == 0:
         time = Config.default_waiting_time * 1000
     else:
@@ -303,29 +311,12 @@ def show_answer():
         Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
         load_audio_to_player(Config.playlist_answer)
 
-
-def temporary_false_toggle_autoplay(flag):
-    card = mw.reviewer.card
-    if (flag == "begin") and mw.col.decks.confForDid(card.odid or card.did)['autoplay']:
-        Config.last_card = card
-        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = False
-        Config.temporary_false_autoplay = True
-        # print('begin')
-    elif (flag == "end") and Config.temporary_false_autoplay:
-        if card is None:
-            card = Config.last_card
-        mw.col.decks.confForDid(card.odid or card.did)['autoplay'] = True
-        Config.temporary_false_autoplay = False
-        # print('end')
-
 def change_card():
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
         mw.reviewer._answerCard(Config.answer_choice)
-        if mw.state == 'overview':
-            temporary_false_toggle_autoplay("end")
 
 def check_valid_card():
     # utils.showInfo("Check Valid Card")
@@ -334,20 +325,23 @@ def check_valid_card():
     if card.note() is None: return False
     return True
 
-
 def show_question():
-    sound.clearAudioQueue()
     if not check_valid_card():
-        temporary_false_toggle_autoplay("end")
         return
-    temporary_false_toggle_autoplay("begin")
     set_time_limit()
     if Config.play:
         Config.timer = mw.progress.timer(Config.time_limit_question, show_answer, False)
         load_audio_to_player(Config.playlist_question)
 
+def mask_autoplay(self,card):
+    if Config.play:
+        return False
+    else:
+        return self.mw.col.decks.confForDid(card.odid or card.did)['autoplay']
+
 def start():
     if Config.play: return
+    Reviewer.autoplay = mask_autoplay
     apply_audio_speed()
     if Config.show_notif:
         CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: start", "Message")
@@ -359,11 +353,9 @@ def start():
     Config.play = True
     if mw.reviewer.state == 'question':
         if check_valid_card():
-            temporary_false_toggle_autoplay("begin")
             show_answer()
     elif mw.reviewer.state == 'answer':
         if check_valid_card():
-            temporary_false_toggle_autoplay("begin")
             change_card()
 
 def stop():
@@ -377,7 +369,6 @@ def stop():
     if Config.timer is not None:
         Config.timer.stop()
     Config.timer = None
-    temporary_false_toggle_autoplay("end")
     # Config.audio_speed = 1.0
 
 
