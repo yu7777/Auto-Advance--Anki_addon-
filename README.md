@@ -91,7 +91,7 @@ class Config(object):
     wait_for_audio = True # if wait for audio finished or not. Modify if applicable
     is_question_audio = True # Don't change
     is_answer_audio = True # Don't change
-    repeat_field = {"发音":[0.7,1.5,2.6]} # specify repeat field and audio speed each time. Modify if applicable
+    repeat_field = {"发音":[0.7,1.6,2.8]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
@@ -109,9 +109,7 @@ class Config(object):
     answer_choice = int(2) # chose Hard
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
-    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this fields_with_audio
+    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
-    temporary_false_autoplay = False # Don't change
-    last_card = None # Don't change
 ```
