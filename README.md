@@ -1,10 +1,19 @@
-# Auto-Advance Anki addon  
-This is an Anki addon which automatically show answer, make choice and then flip card.   
-Automatically play cards and repeat specified audio field at specified play speed.   
+# Auto-Advance Anki addon   
+This add-on has similar features with Ankimobile's auto advance feature.
+<ol>
+<li><b>wait for audio to finish playing. 
+</b></li><li><b>automatically show answer.
+</b></li><li><b>automatically choose &lt;Hard&gt; or &lt;Good&gt; and then flip card.   
+</b></li><li><b>repeat specified audio field at specified play speed. </b> e.g. repeat_field = {"发音":[0.7,1.5,2.6]} , repeat 3 times at different speed
+</li><li><b>slow down or speed up some selected audio files while playing.  
+</b></li><li><b>mode 0: only play first audio. mode 1: play all audio  
+</b></li>
+</ol>
+    
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-Currently I only tested on Mac.   
-I didn't test on Linux. It may work on Linux because Anki also use mpv on Linux.   
+Currently only tested on Mac.   
+I guess it also works on Linux because Anki use mpv on Linux.   
 Windows version need to add code to load_audio_to_player() and wait_for_audio()  
 
 Feel free to add any new features.   
@@ -91,7 +100,7 @@ class Config(object):
     wait_for_audio = True # if wait for audio finished or not. Modify if applicable
     is_question_audio = True # Don't change
     is_answer_audio = True # Don't change
-    repeat_field = {"发音":[0.7,1.5,2.6]} # specify repeat field and audio speed each time. Modify if applicable
+    repeat_field = {"发音":[0.7,1.6,2.8]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
@@ -109,9 +118,7 @@ class Config(object):
     answer_choice = int(2) # chose Hard
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
-    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this fields_with_audio
+    # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
-    temporary_false_autoplay = False # Don't change
-    last_card = None # Don't change
 ```
