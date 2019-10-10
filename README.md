@@ -15,8 +15,8 @@ This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 Currently only tested on Mac.   
 I guess it also works on Linux because Anki use mpv on Linux.   
 
-Windows version need to add code to load_audio_to_player() and wait_for_audio()  
-Feel free to add any new features.   
+Windows version need to add code to <b>load_audio_to_player() and check_player()</b>  
+<b>Feel free to add any new features.</b>   
 
 # Original addon code.  
 This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
