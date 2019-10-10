@@ -274,29 +274,43 @@ def setupSound():
     except anki.mpv.MPVProcessError:
         print("mpv too old, reverting to mplayer")
 
+wait_audio_event = Event()
 def wait_for_audio():
+    thread = Thread(target=check_player)
+    thread.start()
+    wait_audio_event.wait()
+    thread.join()
+
+def check_player():
     if isWin:
         pass
     else:
         i = 0
-        while True and (i < 5):
+        while True and (i<3):
             i += 1
             if Config.player:
                 try:
                     if Config.player.get_property("idle-active"):
                         # print('not playing')
+                        wait_audio_event.set()
                         break
                     else:
                         t_remain = Config.player.get_property("playtime-remaining")
-                        # print(str(i)+" times try")
+                        t_remain += 0.1
+                        if Config.is_answer_audio:
+                            t_remain += Config.addition_time + Config.addition_time_answer
+                        if Config.is_question_audio:
+                            t_remain += Config.addition_time + Config.addition_time_question
+                        # print(str(i) + " times")
                         # print(t_remain)
-                        time.sleep(max(t_remain+0.05,0.1))
+                        time.sleep(t_remain)
                 except:
-                    try:
-                        anki.sound.cleanupMPV()
-                        Config.player = None
-                    except:
-                        pass
+                    wait_audio_event.set()
+                    break
+            else:
+                wait_audio_event.set()
+                break
+
 
 
 def show_answer():
