@@ -6,17 +6,17 @@ This add-on has similar features with Ankimobile's auto advance feature.
 </b></li><li><b>automatically choose &lt;Hard&gt; or &lt;Good&gt; and then flip card.   
 </b></li><li><b>repeat specified audio field at specified play speed. </b> e.g. repeat_field = {"发音":[0.7,1.5,2.6]} , repeat 3 times at different speed
 </li><li><b>slow down or speed up some selected audio files while playing.  
-</b></li><li><b>mode 0: only play first audio. mode 1: play all audio  
-</b></li>
+</b></li><li><b>mode 1: play all audios </b>(Normal study) <b>mode 0: only play first audio. </b>(Usually used for Custom Study Session. e.g. quickly review all the cards you learned today)
+</li>
 </ol>
     
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
 Currently only tested on Mac.   
 I guess it also works on Linux because Anki use mpv on Linux.   
-Windows version need to add code to load_audio_to_player() and wait_for_audio()  
 
-Feel free to add any new features.   
+Windows version need to add code to <b>load_audio_to_player() and check_player()</b>  
+<b>Feel free to add any new features.</b>   
 
 # Original addon code.  
 This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
@@ -70,10 +70,11 @@ Press g to toggle default choice: Hard or Good
 
 # Tips.  
 1.  You can use shortcut "j" to start Auto Advance play mode BEFORE you enter your deck and click "Study Now".     
-If you start Auto Advance play mode when you are reviewing a card, then the first card will not be working as it should be with this add-on.     
+If you start Auto Advance play mode when you are reviewing a card and the audio is playing, then the first card will not be working as it should be with this add-on.     
 Not sure if this is a bug. Please feel free to modify code on GitHub.     
 2.  Anytime you can use shortcut "k" to stop Auto Advance play mode.     
 3.  Use "[" or "]" to decrease or increase your audio play speed. This works all the time even though you don't use Auto Advance play mode.     
+4.  Use Custom Study and Mode 0 to quickly review the cards (e.g. cards you learned today).
 
 
 # Config Details.  
