@@ -1,5 +1,5 @@
  Anything related time will be count in <b>senconds</b> in this config.  
- <b>Time sequence.</b>   
+ <b>Time sequence.</b>
  <li>show question.<br><b>
  Time of audio play (if no audio play, use default_waiting_time) + addition_time + addition_time_question.</b>
  </li><li>show answer.<br>
