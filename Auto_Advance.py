@@ -28,6 +28,8 @@ from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
 
+__version__ = "1.8"
+
 
 
 class CustomMessageBox(QMessageBox):
@@ -61,6 +63,13 @@ class CustomMessageBox(QMessageBox):
         y = sg.height() / 2 - w.pos().y() - w.rect().height()
         w.move(x, y)
         w.exec_()
+
+
+
+config_list = ['addition_time','addition_time_question','addition_time_answer',\
+                'default_waiting_time','audio_speed','mode','mode_0_field',\
+                'show_notif','show_notif_timeout','wait_for_audio','repeat_field',\
+                'audio_startswith','audio_startswith_speed_factor','ignore_duplicated_field']
 
 
 class Config(object):
@@ -111,6 +120,27 @@ class Config(object):
 
     def __init__(self):
         pass
+
+    def load_config():
+        try:
+            config = mw.addonManager.getConfig(__name__)
+            if config:
+                print('load config.json')
+                for var in config_list:
+                    setattr(Config, var, config[var])
+            else:
+                print('Will use default config')
+        except:
+            print('Something wrong while loading config')
+            pass
+
+    def save_config():
+        config = {}
+        for var in config_list:
+            config[var] = getattr(Config, var)
+        mw.addonManager.writeConfig(__name__, config)
+        print('write data to config.json')
+
 
 
 def find_audio_fields(card):
@@ -195,12 +225,11 @@ def get_audio_speed(audio, field, audio_time):
         speed_factor = 1
     # mode 0: selected audio
     if Config.mode == 0:
-        if field in Config.mode_0_field.keys():
-            for speed in Config.mode_0_field[field]:
-                if speed <= 0:
-                    speed = Config.audio_speed
-                playlist_single.append((audio, speed * speed_factor))
-                time_tmp += audio_time / (speed * speed_factor)
+        for speed in Config.mode_0_field[field]:
+            if speed <= 0:
+                speed = Config.audio_speed
+            playlist_single.append((audio, speed * speed_factor))
+            time_tmp += audio_time / (speed * speed_factor)
         return playlist_single, time_tmp
     else:
         if field in Config.repeat_field.keys():
@@ -210,6 +239,7 @@ def get_audio_speed(audio, field, audio_time):
                 playlist_single.append((audio, speed * speed_factor))
                 time_tmp += audio_time / (speed * speed_factor)
             return playlist_single, time_tmp
+
         playlist_single.append((audio,speed * speed_factor))
         time_tmp += audio_time / (speed * speed_factor)
     return playlist_single, time_tmp
@@ -220,6 +250,9 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
     playlist = []
     if len(audio_fields) > 0:
         for field in audio_fields:
+            if Config.mode == 0:
+                if field not in Config.mode_0_field.keys():
+                    continue
             audios_in_field = fields_with_audio[field]
             for audio in audios_in_field:
                 path = media_path + audio
@@ -370,6 +403,7 @@ def mask_autoplay(self,card):
 
 def start():
     if Config.play: return
+    Config.load_config()
     Reviewer.autoplay = mask_autoplay
     apply_audio_speed()
     if Config.show_notif:
@@ -398,6 +432,7 @@ def stop():
     if Config.timer is not None:
         Config.timer.stop()
     Config.timer = None
+    Config.save_config()
     # Config.audio_speed = 1.0
 
 
@@ -531,17 +566,8 @@ def toggle_choice_hard_good():
         "Default Action: " + choice, "Message")
 
 
-def auto_option():
-    pass
-    # d = MyDialog()
-    # if d.exec():
-    #     showInfo('dialog closed')
 
 afc = mw.form.menuTools.addMenu("Auto Advance")
-
-# action = QAction("Option...", mw)
-# action.triggered.connect(auto_option)
-# afc.addAction(action)
 
 
 action = QAction("Start Auto Advance", mw)
@@ -614,7 +640,10 @@ action.setShortcut("g")
 action.triggered.connect(toggle_choice_hard_good)
 afc.addAction(action)
 
-# action = QAction("Pause audio playback and card flip", mw)
-# action.setShortcut("p")
-# action.triggered.connect(pause_flip)
-# afc.addAction(action)
+action = QAction("Load config", mw)
+action.triggered.connect(Config.load_config)
+afc.addAction(action)
+
+action = QAction("Save config", mw)
+action.triggered.connect(Config.save_config)
+afc.addAction(action)
