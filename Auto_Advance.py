@@ -78,7 +78,9 @@ class Config(object):
     default_waiting_time = 0.5 # default waiting time for both sides, Modify if applicable
     audio_speed = 2.2 # default audio speed, Modify if applicable
     _soundReg = r"\[sound:(.*?)\]" # Don't change
-    mode = 1 # 1: add times in all audios, 0: get time in the first audio
+    mode = 1 # 1: play all audios in card, 0: only play selected audio
+    mode_0_field = {"发音":[-1]} # selected field for mode 0. -1 means use default speed.
+    # if you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}
     stdoutQueue = Queue()
     show_notif = True # show notification or not. Modify if applicable
     show_notif_timeout = 0.8 # time of showing notification, notification will automatically disappear. Modify if applicable
@@ -98,7 +100,7 @@ class Config(object):
     # Thus while reviewing cards all audio files sound at similar speed
     playlist_question = [] # Don't change
     playlist_answer = [] # Don't change
-    # following is your default answer choice. Modify if applicable
+    # following is your default answer Action. Modify if applicable
     # answer_choice = mw.reviewer._defaultEase() # default ease
     answer_choice = int(2) # chose Hard
     player = None # Don't change
@@ -185,17 +187,31 @@ def calculate_file_length(suffix, mp):
 def get_audio_speed(audio, field, audio_time):
     playlist_single = []
     time_tmp = 0
+    speed = Config.audio_speed
+
     if audio.startswith(Config.audio_startswith):
-        speed = Config.audio_speed * Config.audio_startswith_speed_factor
+        speed_factor = Config.audio_startswith_speed_factor
     else:
-        speed = Config.audio_speed
-    if field in Config.repeat_field.keys():
-        for speed in Config.repeat_field[field]:
-            playlist_single.append((audio,speed))
-            time_tmp += audio_time / speed
+        speed_factor = 1
+    # mode 0: selected audio
+    if Config.mode == 0:
+        if field in Config.mode_0_field.keys():
+            for speed in Config.mode_0_field[field]:
+                if speed <= 0:
+                    speed = Config.audio_speed
+                playlist_single.append((audio, speed * speed_factor))
+                time_tmp += audio_time / (speed * speed_factor)
         return playlist_single, time_tmp
-    playlist_single.append((audio,speed))
-    time_tmp += audio_time / speed
+    else:
+        if field in Config.repeat_field.keys():
+            for speed in Config.repeat_field[field]:
+                if speed <= 0:
+                    speed = Config.audio_speed
+                playlist_single.append((audio, speed * speed_factor))
+                time_tmp += audio_time / (speed * speed_factor)
+            return playlist_single, time_tmp
+        playlist_single.append((audio,speed * speed_factor))
+        time_tmp += audio_time / (speed * speed_factor)
     return playlist_single, time_tmp
 
 
@@ -209,10 +225,9 @@ def calculate_time(media_path, audio_fields, fields_with_audio):
                 path = media_path + audio
                 audio_time = calculate_file_length(audio[-3:], path)
                 playlist_single, time_tmp = get_audio_speed(audio, field, audio_time)
-                playlist.extend(playlist_single)
-                time += time_tmp
-                if Config.mode == 0: break #first audio
-            if Config.mode == 0: break #first field
+                if playlist_single:
+                    playlist.extend(playlist_single)
+                    time += time_tmp
     if time == 0:
         time = Config.default_waiting_time * 1000
     else:
@@ -451,9 +466,9 @@ def add_time_answer():
 def switch_mode():
     Config.mode = 1 - Config.mode
     if Config.mode == 1:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Get time of all audios", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Play all audios in card", "Message")
     else:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Only get time of the first audio", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Play selected audio", "Message")
 
 def toggle_show_notification():
     Config.show_notif = not Config.show_notif
@@ -476,7 +491,7 @@ def increase_audio_speed():
 def pause_flip():
     if not Config.play: return
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Automatically flip cards: Pause", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: Pause", "Message")
     audio_pause()
     Config.play = False
     hooks.remHook("showQuestion",show_question)
@@ -513,7 +528,7 @@ def toggle_choice_hard_good():
         choice = "Hard"
     if Config.show_notif:
         CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
-        "Default choice: " + choice, "Message")
+        "Default Action: " + choice, "Message")
 
 
 def auto_option():
@@ -524,32 +539,32 @@ def auto_option():
 
 afc = mw.form.menuTools.addMenu("Auto Advance")
 
-action = QAction("Option...", mw)
-action.triggered.connect(auto_option)
-afc.addAction(action)
+# action = QAction("Option...", mw)
+# action.triggered.connect(auto_option)
+# afc.addAction(action)
 
 
-action = QAction("Start automatically flipping card", mw)
+action = QAction("Start Auto Advance", mw)
 action.setShortcut('j')
 action.triggered.connect(start)
 afc.addAction(action)
 
-action = QAction("Stop automatically flipping card", mw)
+action = QAction("Stop Auto Advance", mw)
 action.setShortcut('k')
 action.triggered.connect(stop)
 afc.addAction(action)
 
-action = QAction("Start automatically flipping card", mw)
+action = QAction("Start Auto Advance", mw)
 action.setShortcut('Ctrl+j')
 action.triggered.connect(start)
 afc.addAction(action)
 
-action = QAction("Stop automatically flipping card", mw)
+action = QAction("Stop Auto Advance", mw)
 action.setShortcut('Ctrl+k')
 action.triggered.connect(stop)
 afc.addAction(action)
 
-action = QAction("Switch mode", mw)
+action = QAction("Switch mode: play ALL or SELECTED audios", mw)
 action.setShortcut('Ctrl+y')
 action.triggered.connect(switch_mode)
 afc.addAction(action)
@@ -594,7 +609,7 @@ action.setShortcut("p")
 action.triggered.connect(audio_pause)
 afc.addAction(action)
 
-action = QAction("Toggle Choice: Hard or Good", mw)
+action = QAction("Toggle Default Action: Hard or Good", mw)
 action.setShortcut("g")
 action.triggered.connect(toggle_choice_hard_good)
 afc.addAction(action)
