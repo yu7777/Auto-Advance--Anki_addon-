@@ -54,7 +54,7 @@ answer_choice = int(2) # choose Hard
   <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-13%20at%206.00.48%20pm.png" width="550" title="menu and shortcuts">
 </p>
 <p align="right">
-  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-13%20at%206.02.33%20pm.png" width="550" title="menu and shortcuts">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-14%20at%2010.45.57%20am.png" width="550" title="menu and shortcuts">
 </p>
 
 
