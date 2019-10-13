@@ -6,7 +6,7 @@ This add-on has similar features with Ankimobile's auto advance feature.
 </b></li><li><b>automatically choose &lt;Hard&gt; or &lt;Good&gt; and then flip card.   
 </b></li><li><b>repeat specified audio field at specified play speed. </b> e.g. repeat_field = {"发音":[0.7,1.5,2.6]} , repeat 3 times at different speed
 </li><li><b>slow down or speed up some selected audio files while playing.  
-</b></li><li><b>mode 1: play all audios </b>(Normal study) <b>mode 0: only play first audio. </b>(Usually used for Custom Study Session. e.g. quickly review all the cards you learned today)
+</b></li><li><b>mode 1: play all audios </b>(Normal study) <b>mode 0: play selected audio. </b>(Usually used for Custom Study Session. e.g. quickly review all the cards you learned today)
 </li>
 </ol>
     
@@ -28,6 +28,11 @@ repeat_field = {"发音":[0.8,1.5,2.2]} # specify repeat field and audio speed e
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
+```
+Mode 0: Only play selected audio. -1 means play audio at default speed.     
+NOTE: If you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}
+```python
+mode_0_field = {"发音":[-1]}
 ```
 Slow down or speed up some selected audio files while playing.   
 ```python
@@ -94,7 +99,9 @@ class Config(object):
     default_waiting_time = 0.5 # default waiting time for both sides, Modify if applicable
     audio_speed = 2.2 # default audio speed, Modify if applicable
     _soundReg = r"\[sound:(.*?)\]" # Don't change
-    mode = 1 # 1: add times in all audios, 0: get time in the first audio
+    mode = 1 # 1: play all audios in card, 0: only play selected audio
+    mode_0_field = {"发音":[-1]} # selected field for mode 0. -1 means use default speed.
+    # if you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}
     stdoutQueue = Queue()
     show_notif = True # show notification or not. Modify if applicable
     show_notif_timeout = 0.8 # time of showing notification, notification will automatically disappear. Modify if applicable
@@ -114,7 +121,7 @@ class Config(object):
     # Thus while reviewing cards all audio files sound at similar speed
     playlist_question = [] # Don't change
     playlist_answer = [] # Don't change
-    # following is your default answer choice. Modify if applicable
+    # following is your default answer Action. Modify if applicable
     # answer_choice = mw.reviewer._defaultEase() # default ease
     answer_choice = int(2) # chose Hard
     player = None # Don't change
@@ -122,4 +129,5 @@ class Config(object):
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
     # will be played three times. This is useful on Ankimobile.
     # but in my Mac, i need ignore duplicated field because i have already set repeat_field
+
 ```
