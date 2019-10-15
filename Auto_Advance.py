@@ -28,7 +28,7 @@ from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
 
-__version__ = "1.8"
+__version__ = "1.9"
 
 
 
@@ -52,12 +52,17 @@ class CustomMessageBox(QMessageBox):
 
     @staticmethod
     def showWithTimeout(timeoutSeconds, message, title, icon=QMessageBox.Information, buttons=QMessageBox.Ok):
+        font = QFont()
+        font.setFamily("Arial")
+        font.setPointSize(15)
+
         w = CustomMessageBox()
         w.autoclose = True
         w.timeout = timeoutSeconds
         w.setText(message)
         w.setWindowTitle(title)
         w.setIcon(icon)
+        w.setFont(font)
         sg = w.parent().rect()
         x = sg.width() / 2 - w.pos().x() - w.rect().width()
         y = sg.height() / 2 - w.pos().y() - w.rect().height()
@@ -110,8 +115,10 @@ class Config(object):
     playlist_question = [] # Don't change
     playlist_answer = [] # Don't change
     # following is your default answer Action. Modify if applicable
-    # answer_choice = mw.reviewer._defaultEase() # default ease
-    answer_choice = int(2) # chose Hard
+    answer_choice = "mw.reviewer._defaultEase()" # default ease
+    # answer_choice = int(2) # chose Hard
+    temp_answer_flag = False
+    temp_answer_choice = None
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
@@ -294,22 +301,34 @@ def load_audio_to_player(playlist):
         return
     if isWin:
         #not test in Windows
-        pass
+        for audio,speed in playlist:
+            play(audio)
+        # pass
     else:
         if not Config.player:
             # print('set up sound')
             setupSound()
-        for file,speed in playlist:
+        for audio,speed in playlist:
             try:
-                path = os.path.join(os.getcwd(), file)
+                path = os.path.join(os.getcwd(), audio)
                 Config.player.command("loadfile", path, "append-play","speed="+ f"{speed:.2f}")
             except:
                 print('something wrong while loading file to MPV')
                 break
 
+def ignore_speed_in_Config_field():
+    if isWin:
+        for key in Config.repeat_field.keys():
+            Config.repeat_field[key] = [-1]*len(Config.repeat_field[key])
+        for key in Config.mode_0_field.keys():
+            Config.mode_0_field[key] = [-1]*len(Config.mode_0_field[key])
+        Config.audio_startswith_speed_factor = 1
+        Config.audio_speed = 1
 
 def setupSound():
     if isWin:
+        if MplayerMonitor:
+            Config.player = MplayerMonitor.queueMplayer
         return
     try:
         if mpvManager:
@@ -331,10 +350,26 @@ def wait_for_audio():
 
 def check_player():
     if isWin:
-        pass
+        try:
+            i = 0
+            while i<10:
+                i += 1
+                if not mplayerClear:
+                    if Config.is_answer_audio:
+                        t_remain += Config.addition_time + Config.addition_time_answer
+                    if Config.is_question_audio:
+                        t_remain += Config.addition_time + Config.addition_time_question
+                    print(t_remain)
+                    time.sleep(max(t_remain,1))
+                else:
+                    print('not playing')
+                    wait_audio_event.set()
+                    break
+        except:
+            wait_audio_event.set()
     else:
         i = 0
-        while True and (i<3):
+        while i<3:
             i += 1
             if Config.player:
                 try:
@@ -373,12 +408,22 @@ def show_answer():
         Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
         load_audio_to_player(Config.playlist_answer)
 
+def answer_action():
+    if Config.temp_answer_flag:
+        Config.temp_answer_flag = False
+        return Config.temp_answer_choice
+    else:
+        if Config.answer_choice == "mw.reviewer._defaultEase()":
+            return mw.reviewer._defaultEase()
+        else:
+            return Config.answer_choice
+
 def change_card():
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
-        mw.reviewer._answerCard(Config.answer_choice)
+        mw.reviewer._answerCard(answer_action())
 
 def check_valid_card():
     # utils.showInfo("Check Valid Card")
@@ -404,6 +449,7 @@ def mask_autoplay(self,card):
 def start():
     if Config.play: return
     Config.load_config()
+    ignore_speed_in_Config_field()
     Reviewer.autoplay = mask_autoplay
     apply_audio_speed()
     if Config.show_notif:
@@ -514,13 +560,13 @@ def toggle_wait_for_audio():
 def decrease_audio_speed():
     Config.audio_speed = max(0.1, Config.audio_speed - 0.1)
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Decrease audio speed. Current speed flip: " + f"{Config.audio_speed:.1f}", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Decrease audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
     apply_audio_speed()
 
 def increase_audio_speed():
     Config.audio_speed = min(4.0, Config.audio_speed + 0.1)
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Increase audio speed. Current speed flip: " + f"{Config.audio_speed:.1f}", "Message")
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Increase audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
     apply_audio_speed()
 
 def pause_flip():
@@ -565,6 +611,23 @@ def toggle_choice_hard_good():
         CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
         "Default Action: " + choice, "Message")
 
+def temp_answer_action_again():
+    if not Config.temp_answer_flag:
+        Config.temp_answer_flag = True
+    Config.temp_answer_choice = int(1)
+    choice = "Again"
+    if Config.show_notif:
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
+        "Temporary Action will be: " + choice, "Message")
+
+def temp_answer_action_hard():
+    if not Config.temp_answer_flag:
+        Config.temp_answer_flag = True
+    Config.temp_answer_choice = int(2)
+    choice = "Hard"
+    if Config.show_notif:
+        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
+        "Temporary Action will be: " + choice, "Message")
 
 
 afc = mw.form.menuTools.addMenu("Auto Advance")
@@ -638,6 +701,16 @@ afc.addAction(action)
 action = QAction("Toggle Default Action: Hard or Good", mw)
 action.setShortcut("g")
 action.triggered.connect(toggle_choice_hard_good)
+afc.addAction(action)
+
+action = QAction("Temporary Answer Action: Again", mw)
+action.setShortcut("Ctrl+,")
+action.triggered.connect(temp_answer_action_again)
+afc.addAction(action)
+
+action = QAction("Temporary Answer Action: Hard", mw)
+action.setShortcut("Ctrl+.")
+action.triggered.connect(temp_answer_action_hard)
 afc.addAction(action)
 
 action = QAction("Load config", mw)
