@@ -12,10 +12,10 @@ This add-on has similar features with Ankimobile's auto advance feature.
     
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-Currently only tested on Mac.   
+Tested on Mac.   
 I guess it also works on Linux because Anki use mpv on Linux.   
 
-Windows version need to add code to <b>load_audio_to_player() and check_player()</b>  
+Windows version works, but all speed setting will be ignored. It means all audios will be played with correct repeat times but only at speed 1.
 <b>Feel free to add any new features.</b>   
 
 # Original addon code.  
