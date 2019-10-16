@@ -12,14 +12,9 @@ This add-on has similar features with Ankimobile's auto advance feature.
     
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-Tested on Mac.   
-I guess it also works on Linux because Anki use mpv on Linux.   
-
+Tested on <b>Mac OS</b>. I guess it also works on Linux because Anki use mpv on Linux.   
 Windows version works, but all speed setting will be ignored. It means all audios will be played with correct repeat times but only at speed 1.
 <b>Feel free to add any new features.</b>   
-
-# Original addon code.  
-This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
 
 # New Features.  
 Repeat audio play at differnt play speed.    
@@ -45,8 +40,8 @@ audio_startswith_speed_factor = 0.8 # change audio speed for identified audio fi
 ```
 Add automatically select Hard while reviewing.    
 ```python
-# answer_choice = mw.reviewer._defaultEase() # default ease
-answer_choice = int(2) # choose Hard
+answer_choice = "mw.reviewer._defaultEase()" # default ease
+# answer_choice = int(2) # choose Hard
 ```
 
 # Menu and Shortcuts
@@ -54,7 +49,10 @@ answer_choice = int(2) # choose Hard
   <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-13%20at%206.00.48%20pm.png" width="550" title="menu and shortcuts">
 </p>
 <p align="right">
-  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-14%20at%2010.45.57%20am.png" width="550" title="menu and shortcuts">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-16%20at%204.53.26%20pm.png" width="550" title="menu and shortcuts">
+</p>
+<p align="left">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-16%20at%204.42.45%20pm.png" width="550" title="menu and shortcuts">
 </p>
 
 
@@ -86,3 +84,5 @@ Not sure if this is a bug. Please feel free to modify code on GitHub.
 5.  When you modify config on Anki's addonManager, you need load this new config to addon. This can be done by clicking <b>load config</b> in menu Tools>>Auto Advance>>Load config. Otherwise the addon will keep using old config. When you Stop Auto Advance, the currently used config will be saved automatically.
 
 
+# Original addon code.  
+This Addon is a revised version of Automatically flip cards https://ankiweb.net/shared/info/631932779  https://github.com/TruongQToan/Automatically-flip-cards/tree/master
