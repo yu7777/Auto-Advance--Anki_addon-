@@ -300,10 +300,8 @@ def load_audio_to_player(playlist):
     if not playlist:
         return
     if isWin:
-        #not test in Windows
         for audio,speed in playlist:
-            play(audio)
-        # pass
+            play(audio) #ignore speed
     else:
         if not Config.player:
             # print('set up sound')
@@ -317,7 +315,7 @@ def load_audio_to_player(playlist):
                 break
 
 def ignore_speed_in_Config_field():
-    if isWin:
+    if isWin: #for calculating correct time
         for key in Config.repeat_field.keys():
             Config.repeat_field[key] = [-1]*len(Config.repeat_field[key])
         for key in Config.mode_0_field.keys():
@@ -350,23 +348,8 @@ def wait_for_audio():
 
 def check_player():
     if isWin:
-        try:
-            i = 0
-            while i<10:
-                i += 1
-                if not mplayerClear:
-                    if Config.is_answer_audio:
-                        t_remain += Config.addition_time + Config.addition_time_answer
-                    if Config.is_question_audio:
-                        t_remain += Config.addition_time + Config.addition_time_question
-                    print(t_remain)
-                    time.sleep(max(t_remain,1))
-                else:
-                    print('not playing')
-                    wait_audio_event.set()
-                    break
-        except:
-            wait_audio_event.set()
+        time.sleep(0.2)
+        wait_audio_event.set()
     else:
         i = 0
         while i<3:
