@@ -12,9 +12,9 @@ This add-on has similar features with Ankimobile's auto advance feature.
     
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-Tested on <b>Mac OS</b>. I guess it also works on Linux because Anki use mpv on Linux.   
-Windows version works, but all speed setting will be ignored. It means all audios will be played with correct repeat times but only at speed 1.
-<b>Feel free to add any new features.</b>   
+<b>Used a lot on Mac OS</b>. I guess it also works on <b>Linux</b> because Anki use mpv on Linux.   
+<b>Windows version works</b>, but all speed setting will be ignored. It means all audios will be played with correct repeat times but only at speed 1.    
+I don't use Anki on Windows, so please <b>Feel free to add any new features.</b>   
 
 # New Features.  
 Repeat audio play at differnt play speed.    
