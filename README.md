@@ -46,10 +46,10 @@ answer_choice = "mw.reviewer._defaultEase()" # default ease
 
 # Menu and Shortcuts
 <p align="left">
-  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-13%20at%206.00.48%20pm.png" width="550" title="menu and shortcuts">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-17%20at%205.05.00%20pm.png" width="550" title="menu and shortcuts">
 </p>
 <p align="right">
-  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-16%20at%204.53.26%20pm.png" width="550" title="menu and shortcuts">
+  <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-17%20at%205.04.31%20pm.png" width="550" title="menu and shortcuts">
 </p>
 <p align="left">
   <img src="https://github.com/yu7777/Auto-Advance--Anki_addon-/blob/master/Screen%20Shot%202019-10-16%20at%204.42.45%20pm.png" width="550" title="menu and shortcuts">
