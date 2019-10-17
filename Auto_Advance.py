@@ -28,7 +28,7 @@ from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
 
-__version__ = "1.9"
+__version__ = "2.0"
 
 
 
@@ -328,16 +328,17 @@ def setupSound():
         if MplayerMonitor:
             Config.player = MplayerMonitor.queueMplayer
         return
-    try:
-        if mpvManager:
-            Config.player = mpvManager
-        else:
-            anki.sound.setupMPV()
-            Config.player = mpvManager
-    except FileNotFoundError:
-        print("mpv not found, reverting to mplayer")
-    except anki.mpv.MPVProcessError:
-        print("mpv too old, reverting to mplayer")
+    else:
+        try:
+            if mpvManager:
+                Config.player = mpvManager
+            else:
+                anki.sound.setupMPV()
+                Config.player = mpvManager
+        except FileNotFoundError:
+            print("mpv not found, reverting to mplayer")
+        except anki.mpv.MPVProcessError:
+            print("mpv too old, reverting to mplayer")
 
 wait_audio_event = Event()
 def wait_for_audio():
