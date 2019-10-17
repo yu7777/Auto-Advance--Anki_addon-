@@ -1,26 +1,37 @@
  Anything related time will be count in <b>senconds</b> in this config.  
-<li><b>Time sequence.</b>
-</li><li>show question.<br><b>
- Time of audio play (if no audio play, use default_waiting_time) + addition_time + addition_time_question.</b>
- </li><li>show answer.<br>
- <b>Time of audio play (if no audio play, use default_waiting_time) + addition_time + addition_time_answer.
- </b></li><li>action Hard or Good. Then next card.
-</li><br>
-<b>Windows version will ignore any speed setting.</b><br>
-<li>"audio_speed": 2.2, <b>This is the default play speed, you can change it with shortcuts [ or ]</b>
-</li><li> "mode": 1, <b> play all audios (Normal study) mode 0: play selected audio.(Usually used for Custom Study Session. e.g. quickly review all the cards you learned today)
-</b></li><li>"mode_0_field": {"发音":[-1]}<br>
- <b>Mode 0 selected field "发音". -1 means play audio at default speed. NOTE: If you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}</b>
- </li><li>"show_notif": true, #if show notification or not
- </li><li>"show_notif_timeout": 0.8, 
- </li><li>"wait_for_audio": true, 
- </li><li>"repeat_field": {"发音":[0.7,1.5,2.6]}, <br><strong>
+#### Time sequence.
+<li>show <b>Question.</b>   
+ Time of audio play (if no audio play, use default_waiting_time) + addition\_time + addition\_time\_question.</li>
+<li>show <b>Answer.</b>   
+Time of audio play (if no audio play, use default_waiting_time) + addition\_time + addition\_time\_answer.</li>
+<li><b>Action</b> Hard or Good. Then next card.
+</li>
+#### Windows version will ignore any speed setting.
+**"audio_speed"**: 2.2, This is the default play speed, you can change it with shortcuts [ or ].   
+**"mode"**: 1, play all audios (Normal study) mode 0: play selected audio.(Usually used for Custom Study Session. e.g. quickly review all the cards you learned today).  
+**"mode\_0\_field"**: {"发音":[-1]},  Mode 0 selected field "发音". -1 means play audio at default speed. NOTE: If you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}   
+**"show\_notif"**: true, #if show notification or not.   
+**"show\_notif\_timeout"**: 0.8,   
+**"wait\_for\_audio"**: true,   
+**"repeat\_field"**: {"发音":[0.7,1.5,2.6]},    
  specify repeat field and audio speed each time.<br>
  e.g. {"voice":[0.5],"sentence":[1.5,2]} means:<br>
- any audio in voice field will be played once at audio speed 0.5, and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2</strong>
- <br><br>
- </li><li>"audio_startswith": "mdx-oalecd9_mdx", 
- </li><li>"audio_startswith_speed_factor": 0.6, <br></b>
- change audio speed for identified audio files by "audio_startswith". <br>
- e.g. audio files from different sources may have different audio speed by default. My case is that the audio files from oalecd9_mdx is faster than other audio files, so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9_mdx" will be played at speed 2.0 * 0.8 = 1.6.</b>
- </li><li>"ignore_duplicated_field": true #if ignore duplicated field
+ any audio in voice field will be played once at audio speed 0.5, and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2.  
+**"audio\_startswith"**: "mdx-oalecd9\_mdx",   
+**"audio\_startswith\_speed\_factor"**: 0.6, change audio speed for identified audio files by "audio\_startswith". e.g. audio files from different sources may have different audio speed by default. My case is that the audio files from oalecd9\_mdx is faster than other audio files, so if default audio speed is 2.0, than audio files startswith "mdx-oalecd9\_mdx" will be played at speed 2.0 * 0.8 = 1.6.    
+**"ignore\_duplicated\_field"**: true #if ignore duplicated field.
+#### All shortcuts can be changed in Auto\_Advance.py   
+e.g. action.setShortcut("g"), shortcut "g" can be changed to any other key which is not used by any other software. "Ctrl+," also can be changed to other keyboard shortcuts.   
+You need to restart you Anki to take effect if you change anything on Auto\_Advance.py 
+
+```
+action = QAction("Toggle Default Action: Hard or Good", mw)
+action.setShortcut("g")
+action.triggered.connect(toggle_choice_hard_good)
+afc.addAction(action)
+
+action = QAction("Temporary Answer Action: Again", mw)
+action.setShortcut("Ctrl+,")
+action.triggered.connect(temp_answer_action_again)
+afc.addAction(action)
+```
