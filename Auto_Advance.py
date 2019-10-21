@@ -688,12 +688,12 @@ action.triggered.connect(toggle_choice_hard_good)
 afc.addAction(action)
 
 action = QAction("Temporary Answer Action: Again", mw)
-action.setShortcut("Ctrl+,")
+action.setShortcut(",")
 action.triggered.connect(temp_answer_action_again)
 afc.addAction(action)
 
 action = QAction("Temporary Answer Action: Hard", mw)
-action.setShortcut("Ctrl+.")
+action.setShortcut(".")
 action.triggered.connect(temp_answer_action_hard)
 afc.addAction(action)
 
