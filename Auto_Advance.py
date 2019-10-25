@@ -5,6 +5,7 @@ from aqt import progress
 import time
 from aqt.utils import getText
 from anki.utils import  isWin
+from aqt.utils import tooltip, closeTooltip
 from aqt.reviewer import Reviewer
 import string
 from .mutagen.mp3 import MP3
@@ -132,13 +133,16 @@ class Config(object):
         try:
             config = mw.addonManager.getConfig(__name__)
             if config:
-                print('load config.json')
+                # print('Load config.json')
                 for var in config_list:
                     setattr(Config, var, config[var])
+                tooltip("Auto Advance: config.json is loaded")
             else:
-                print('Will use default config')
+                tooltip("Auto Advance: Cannot find file config.json. Will use default config")
+                # print('Will use default config')
         except:
-            print('Something wrong while loading config')
+            tooltip("Auto Advance: Something wrong while loading config")
+            # print('Something wrong while loading config')
             pass
 
     def save_config():
@@ -146,7 +150,8 @@ class Config(object):
         for var in config_list:
             config[var] = getattr(Config, var)
         mw.addonManager.writeConfig(__name__, config)
-        print('write data to config.json')
+        tooltip("Auto Advance: Current settings have been saved to config.json")
+        # print('write data to config.json')
 
 
 
@@ -407,6 +412,7 @@ def change_card():
         wait_for_audio()
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
+        closeTooltip()
         mw.reviewer._answerCard(answer_action())
 
 def check_valid_card():
@@ -601,8 +607,9 @@ def temp_answer_action_again():
     Config.temp_answer_choice = int(1)
     choice = "Again"
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
-        "Temporary Action will be: " + choice, "Message")
+        tooltip("Auto Advance: Temporary Action will be: Again", period=3000, parent=None)
+        # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
+        # "Temporary Action will be: " + choice, "Message")
 
 def temp_answer_action_hard():
     if not Config.temp_answer_flag:
@@ -610,8 +617,9 @@ def temp_answer_action_hard():
     Config.temp_answer_choice = int(2)
     choice = "Hard"
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
-        "Temporary Action will be: " + choice, "Message")
+        tooltip("Auto Advance: Temporary Action will be: Hard", period=3000, parent=None)
+        # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
+        # "Temporary Action will be: " + choice, "Message")
 
 
 afc = mw.form.menuTools.addMenu("Auto Advance")
