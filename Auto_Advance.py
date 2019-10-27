@@ -393,9 +393,9 @@ def show_answer():
         if mw.reviewer.typedAnswer == None:
             mw.reviewer.typedAnswer = ""
         mw.reviewer._showAnswer()
-    if Config.play:
-        Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
-        load_audio_to_player(Config.playlist_answer)
+        if Config.play:
+            Config.timer = mw.progress.timer(Config.time_limit_answer, change_card, False)
+            load_audio_to_player(Config.playlist_answer)
 
 def answer_action():
     if Config.temp_answer_flag:
@@ -550,13 +550,15 @@ def toggle_wait_for_audio():
 def decrease_audio_speed():
     Config.audio_speed = max(0.1, Config.audio_speed - 0.1)
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Decrease audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
+        tooltip("Decrease audio speed. Current speed: " + f"{Config.audio_speed:.1f}")
+        # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Decrease audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
     apply_audio_speed()
 
 def increase_audio_speed():
     Config.audio_speed = min(4.0, Config.audio_speed + 0.1)
     if Config.show_notif:
-        CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Increase audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
+        tooltip("Increase audio speed. Current speed: " + f"{Config.audio_speed:.1f}")
+        # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Increase audio speed. Current speed: " + f"{Config.audio_speed:.1f}", "Message")
     apply_audio_speed()
 
 def pause_flip():
@@ -607,7 +609,7 @@ def temp_answer_action_again():
     Config.temp_answer_choice = int(1)
     choice = "Again"
     if Config.show_notif:
-        tooltip("Auto Advance: Temporary Action will be: Again", period=3000, parent=None)
+        tooltip("Auto Advance: Temporary Action will be: <strong>Again</strong>", period=3000, parent=None)
         # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
         # "Temporary Action will be: " + choice, "Message")
 
@@ -617,7 +619,7 @@ def temp_answer_action_hard():
     Config.temp_answer_choice = int(2)
     choice = "Hard"
     if Config.show_notif:
-        tooltip("Auto Advance: Temporary Action will be: Hard", period=3000, parent=None)
+        tooltip("Auto Advance: Temporary Action will be: <strong>Hard</strong>", period=3000, parent=None)
         # CustomMessageBox.showWithTimeout(Config.show_notif_timeout, \
         # "Temporary Action will be: " + choice, "Message")
 
