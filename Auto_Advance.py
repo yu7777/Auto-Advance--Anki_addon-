@@ -121,7 +121,7 @@ class Config(object):
     # answer_choice = int(2) # chose Hard
     temp_answer_flag = False
     temp_answer_choice = None
-    temp_answer_addition_time = 2
+    temp_answer_addition_time = 2.5
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
@@ -413,7 +413,12 @@ def change_card():
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
     if Config.temp_answer_flag:
-        time.sleep(Config.temp_answer_addition_time)
+        tmp_time = Config.temp_answer_addition_time * 1000
+    else:
+        tmp_time = 0
+    Config.timer = mw.progress.timer(tmp_time, _change_card, False)
+
+def _change_card():
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
         closeTooltip()
