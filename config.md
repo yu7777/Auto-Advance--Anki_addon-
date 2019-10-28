@@ -3,7 +3,8 @@
 <li>show <b>Question.</b>   
  Time of audio play (if no audio play, use default_waiting_time) + addition\_time + addition\_time\_question.</li>
 <li>show <b>Answer.</b>   
-Time of audio play (if no audio play, use default_waiting_time) + addition\_time + addition\_time\_answer + temp\_answer\_addition\_time (if you use shortcut , or . to set a temporary answer action, prefered because you can do this even when card is on question side and answer buttons are not showing. Note: before this add-on take answer action and flip card, you can always use default answer buttons or shortcuts 1,2,3,4 to manually choose your own answer)</li>
+Time of audio play (if no audio play, use default_waiting_time) + addition\_time + addition\_time\_answer   
++ temp\_answer\_addition\_time (if you use shortcut , or . to set a temporary answer action, prefered because you can do this even when card is on question side and answer buttons are not showing. Note: before this add-on take answer action and flip card, you can always use default answer buttons or shortcuts 1,2,3,4 to manually choose your own answer)</li>
 <li><b>Action</b> Again, Hard or Good. Then next card.
 </li>
 #### Windows version will ignore any speed setting.
