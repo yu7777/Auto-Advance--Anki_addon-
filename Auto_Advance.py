@@ -29,7 +29,7 @@ from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
 
-__version__ = "2.0"
+__version__ = "2.1"
 
 
 
@@ -75,7 +75,8 @@ class CustomMessageBox(QMessageBox):
 config_list = ['addition_time','addition_time_question','addition_time_answer',\
                 'default_waiting_time','audio_speed','mode','mode_0_field',\
                 'show_notif','show_notif_timeout','wait_for_audio','repeat_field',\
-                'audio_startswith','audio_startswith_speed_factor','ignore_duplicated_field']
+                'audio_startswith','audio_startswith_speed_factor','ignore_duplicated_field',\
+                'temp_answer_addition_time']
 
 
 class Config(object):
@@ -120,6 +121,7 @@ class Config(object):
     # answer_choice = int(2) # chose Hard
     temp_answer_flag = False
     temp_answer_choice = None
+    temp_answer_addition_time = 2
     player = None # Don't change
     ignore_duplicated_field = True #if ignore duplicated field
     # e.g. i set {{发音}}{{发音}}{{发音}} in my card template so that the audio in this field
@@ -410,6 +412,8 @@ def answer_action():
 def change_card():
     if Config.wait_for_audio and Config.is_answer_audio:
         wait_for_audio()
+    if Config.temp_answer_flag:
+        time.sleep(Config.temp_answer_addition_time)
     if mw.reviewer and mw.col and mw.reviewer.card and mw.state == 'review':
         Config.is_question = True
         closeTooltip()
