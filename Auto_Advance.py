@@ -138,9 +138,9 @@ class Config(object):
                 # print('Load config.json')
                 for var in config_list:
                     setattr(Config, var, config[var])
-                tooltip("Auto Advance: config.json is loaded")
+                tooltip("Auto Advance: config is loaded")
             else:
-                tooltip("Auto Advance: Cannot find file config.json. Will use default config")
+                tooltip("Auto Advance: Cannot find file config. Will use default config")
                 # print('Will use default config')
         except:
             tooltip("Auto Advance: Something wrong while loading config")
@@ -152,7 +152,7 @@ class Config(object):
         for var in config_list:
             config[var] = getattr(Config, var)
         mw.addonManager.writeConfig(__name__, config)
-        tooltip("Auto Advance: Current settings have been saved to config.json")
+        tooltip("Auto Advance: Current settings have been saved to config")
         # print('write data to config.json')
 
 
