@@ -446,7 +446,10 @@ def mask_autoplay(self,card):
         return self.mw.col.decks.confForDid(card.odid or card.did)['autoplay']
 
 def start():
-    if Config.play: return
+    if Config.play:
+        if Config.show_notif:
+            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is working, no need to start again", "Message")
+        return
     Config.load_config()
     ignore_speed_in_Config_field()
     Reviewer.autoplay = mask_autoplay
@@ -460,15 +463,21 @@ def start():
     hooks.addHook("showQuestion", show_question)
     Config.play = True
     if mw.reviewer.state == 'question':
+        if Config.wait_for_audio:
+            wait_for_audio()
         if check_valid_card():
             show_answer()
     elif mw.reviewer.state == 'answer':
+        if Config.wait_for_audio:
+            wait_for_audio()
         if check_valid_card():
             change_card()
 
 def stop():
     #global audio_speed
     if not Config.play:
+        if Config.show_notif:
+            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is not working. No need to stop", "Message")
         return
     if Config.show_notif:
         CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: stop", "Message")
