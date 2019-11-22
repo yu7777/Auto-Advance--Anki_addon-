@@ -29,7 +29,7 @@ from anki.hooks import addHook, wrap, runHook
 from aqt.utils import showInfo
 import re
 
-__version__ = "2.1"
+__version__ = "2.2"
 
 
 
