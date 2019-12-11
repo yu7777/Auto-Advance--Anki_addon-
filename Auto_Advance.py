@@ -365,7 +365,6 @@ def check_player():
             if Config.player:
                 try:
                     if Config.player.get_property("idle-active"):
-                        # print('not playing')
                         wait_audio_event.set()
                         break
                     else:
@@ -375,8 +374,6 @@ def check_player():
                             t_remain += Config.addition_time + Config.addition_time_answer
                         if Config.is_question_audio:
                             t_remain += Config.addition_time + Config.addition_time_question
-                        # print(str(i) + " times")
-                        # print(t_remain)
                         time.sleep(t_remain)
                 except:
                     wait_audio_event.set()
@@ -448,7 +445,7 @@ def mask_autoplay(self,card):
 def start():
     if Config.play:
         if Config.show_notif:
-            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is working, no need to start again", "Message")
+            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is working. Keep going!", "Message")
         return
     Config.load_config()
     ignore_speed_in_Config_field()
@@ -477,7 +474,7 @@ def stop():
     #global audio_speed
     if not Config.play:
         if Config.show_notif:
-            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is not working. No need to stop", "Message")
+            CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance is not working", "Message")
         return
     if Config.show_notif:
         CustomMessageBox.showWithTimeout(Config.show_notif_timeout, "Auto Advance: stop", "Message")
