@@ -19,15 +19,15 @@ I don't use Anki on Windows, so please <b>Feel free to add any new features.</b>
 # New Features.  
 Repeat audio play at differnt play speed.    
 ```python
-repeat_field = {"发音":[0.8,1.5,2.2]} # specify repeat field and audio speed each time. Modify if applicable
+repeat_field = {"voice":[0.8,1.5,2.2]} # specify repeat field and audio speed each time. Modify if applicable
     # e.g. {"voice":[0.5],"sentence":[1.5,2]} means:
     # any audio in voice field will be played once at audio speed 0.5
     # and any audio in sentence field will be played twice, one at speed 1.5 and the other at speed 2
 ```
 Mode 0: Only play selected audio. -1 means play audio at default speed.     
-NOTE: If you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"发音":[0.5,1.5]}
+NOTE: If you want to play it twice at speed 0.5 and 1.5. you can use mode_0_field = {"voice":[0.5,1.5]}
 ```python
-mode_0_field = {"发音":[-1]}
+mode_0_field = {"voice":[-1]}
 ```
 Slow down or speed up some selected audio files while playing.   
 ```python
