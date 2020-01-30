@@ -73,6 +73,10 @@ Press ] to increase the speeds of cards' audios.
 
 Press g to toggle default choice: Hard or Good
 
+Press , temporary choice: Again
+
+Press . temporary choice: Hard
+
 # Tips.  
 1.  You can use shortcut "j" to start Auto Advance play mode BEFORE you enter your deck and click "Study Now".     
 If you start Auto Advance play mode when you are reviewing a card and the audio is playing, then the first card will not be working as it should be with this add-on.     
