@@ -12,7 +12,7 @@ This add-on has similar features with Ankimobile's auto advance feature.
     
 This Anki addon can be found at  https://ankiweb.net/shared/info/1747534155
 
-<b>Used a lot on Mac OS</b>. On <b>Linux</b> this add-on works as well as on Mac OS (tested on Ubuntu).   
+<b>Used a lot on Mac OS</b>. On <b>Linux</b> this add-on works as well as on Mac OS (tested on <b>Ubuntu</b>).   
 <b>Windows version works</b>, but all speed setting will be ignored. It means all audios will be played with correct repeat times but only at speed 1. I don't use Anki on Windows, so please <b>feel free to add any new features.</b>   
 
 # New Features.  
